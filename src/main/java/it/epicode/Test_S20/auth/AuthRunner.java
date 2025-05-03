@@ -1,5 +1,6 @@
 package it.epicode.Test_S20.auth;
 
+import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,6 +19,9 @@ public class AuthRunner implements ApplicationRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private Faker faker;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // Creazione dell'utente admin se non esiste
@@ -30,7 +34,7 @@ public class AuthRunner implements ApplicationRunner {
         Optional<AppUser> normalUser = appUserService.findByUsername("user");
         if (normalUser.isEmpty()) {
             for (int i = 0; i < 10; i++) {
-                appUserService.registerUser("user", "userpwd", Set.of(Role.ROLE_UTENTE_NORMALE));
+                appUserService.registerUser(faker.name().username(), "userpwd", Set.of(Role.ROLE_UTENTE_NORMALE));
             }
         }
 
