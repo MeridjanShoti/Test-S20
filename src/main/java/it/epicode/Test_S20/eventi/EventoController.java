@@ -33,35 +33,37 @@ public class EventoController {
     @PutMapping("/prenota/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommonResponse prenotaPartecipazione(@AuthenticationPrincipal AppUser utenteLoggato, @PathVariable Long id) {
+        System.out.println(utenteLoggato.getId());
         return eventoService.prenotaPartecipazione(id, utenteLoggato);
     }
-    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/annulla/{id}")
     public Evento annullaPartecipazione(@AuthenticationPrincipal AppUser utenteLoggato, @PathVariable Long id) {
         return eventoService.annullaPartecipazione(id, utenteLoggato);
     }
     @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
-    @PostMapping("/eventi")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public Evento createEvento(@RequestBody EventoRequest request , @AuthenticationPrincipal AppUser utenteLoggato) {
         return eventoService.saveEvento(request, utenteLoggato);
     }
     @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
-    @PutMapping("/eventi/{id}")
+    @PutMapping("/{id}")
 
     public Evento updateEvento(@PathVariable Long id, @RequestBody EventoRequest request, @AuthenticationPrincipal AppUser utenteLoggato) {
         return eventoService.updateEvento(id, request, utenteLoggato);
     }
     @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
-    @DeleteMapping("/eventi/{id}")
+    @PatchMapping("/{id}")
+    public Evento updateEventoPatch(@PathVariable Long id, @RequestBody EventoRequest request, @AuthenticationPrincipal AppUser utenteLoggato) {
+        return eventoService.updateEventoPatch(id, request, utenteLoggato);
+    }
+    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEvento(@PathVariable Long id, @AuthenticationPrincipal AppUser utenteLoggato) {
         eventoService.deleteEvento(id, utenteLoggato);
     }
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/eventi/{id}")
-    public Evento getEventoById(@PathVariable Long id, @AuthenticationPrincipal AppUser utenteLoggato) {
-        return eventoService.getEventoById(id);
-    }
+
 
 }

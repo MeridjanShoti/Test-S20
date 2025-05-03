@@ -15,5 +15,5 @@ public class EventoRequest {
     private String descrizione;
     private String luogo;
     private LocalDate data;
-    private int numeroPostiDisponibili;
+    private Integer numeroPostiDisponibili;
 }
