@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -38,6 +39,29 @@ public class EventoController {
     @GetMapping("/annulla/{id}")
     public Evento annullaPartecipazione(@AuthenticationPrincipal AppUser utenteLoggato, @PathVariable Long id) {
         return eventoService.annullaPartecipazione(id, utenteLoggato);
+    }
+    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
+    @PostMapping("/eventi")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Evento createEvento(@RequestBody EventoRequest request , @AuthenticationPrincipal AppUser utenteLoggato) {
+        return eventoService.saveEvento(request, utenteLoggato);
+    }
+    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
+    @PutMapping("/eventi/{id}")
+
+    public Evento updateEvento(@PathVariable Long id, @RequestBody EventoRequest request, @AuthenticationPrincipal AppUser utenteLoggato) {
+        return eventoService.updateEvento(id, request, utenteLoggato);
+    }
+    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE_EVENTI')")
+    @DeleteMapping("/eventi/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEvento(@PathVariable Long id, @AuthenticationPrincipal AppUser utenteLoggato) {
+        eventoService.deleteEvento(id, utenteLoggato);
+    }
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/eventi/{id}")
+    public Evento getEventoById(@PathVariable Long id, @AuthenticationPrincipal AppUser utenteLoggato) {
+        return eventoService.getEventoById(id);
     }
 
 }
