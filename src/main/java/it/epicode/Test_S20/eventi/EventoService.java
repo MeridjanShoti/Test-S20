@@ -1,6 +1,7 @@
 package it.epicode.Test_S20.eventi;
 
 import it.epicode.Test_S20.auth.AppUser;
+import it.epicode.Test_S20.common.CommonResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ public class EventoService {
         return eventoRepository.findAll();
     }
 
-    public Evento prenotaPartecipazione(Long id, AppUser utenteLoggato) {
+    public CommonResponse prenotaPartecipazione(Long id, AppUser utenteLoggato) {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Evento non trovato con ID: " + id));
 
@@ -72,7 +73,8 @@ public class EventoService {
             throw new IllegalArgumentException("Non ci sono piu' posti disponibili per questo evento");
         } else {
             evento.getPartecipanti().add(utenteLoggato);
-            return eventoRepository.save(evento);
+            eventoRepository.save(evento);
+            return new CommonResponse(evento.getId());
         }
     }
     public Evento annullaPartecipazione(Long id, AppUser utenteLoggato) {
