@@ -26,7 +26,7 @@ public class Evento {
     @Column(name = "luogo", length = 20)
     private String luogo;
     private LocalDate data;
-    private int numeroPostiDisponibili;
+    private Integer numeroPostiDisponibili;
     @ManyToOne
     @JoinColumn(name = "organizzatore_id")
     private AppUser organizzatore;
