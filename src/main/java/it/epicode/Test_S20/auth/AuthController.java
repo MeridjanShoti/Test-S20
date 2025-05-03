@@ -41,4 +41,14 @@ public class AuthController {
         );
         return ResponseEntity.ok(new AuthResponse(token));
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/register-organizer")
+    public ResponseEntity<String> registerOrganizer(@RequestBody RegisterRequest registerRequest) {
+        appUserService.registerUser(
+                registerRequest.getUsername(),
+                registerRequest.getPassword(),
+                Set.of(Role.ROLE_ORGANIZZATORE_EVENTI)
+        );
+        return ResponseEntity.ok("Registrazione dell'organizzatore avvenuta con successo");
+    }
 }
