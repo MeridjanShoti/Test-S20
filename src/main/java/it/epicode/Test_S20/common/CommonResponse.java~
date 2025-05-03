@@ -1,0 +1,4 @@
+package it.epicode.Test_S20.common;
+
+public class CommonResponse {
+}

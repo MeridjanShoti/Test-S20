@@ -1,0 +1,49 @@
+package it.epicode.Test_S20.auth;
+
+import com.github.javafaker.Faker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+import java.util.Set;
+
+@Component
+public class AuthRunner implements ApplicationRunner {
+
+    @Autowired
+    private AppUserService appUserService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Faker faker;
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+
+        Optional<AppUser> adminUser = appUserService.findByUsername("admin");
+        if (adminUser.isEmpty()) {
+            AppUser admin = new AppUser("admin", passwordEncoder.encode("adminpwd"), Set.of(Role.ROLE_ADMIN));
+            appUserService.registerUser(admin);
+        }
+
+            for (int i = 0; i < 3; i++){
+                appUserService.registerUser(faker.name().username(), "organizzatorepwd", Set.of(Role.ROLE_ORGANIZZATORE_EVENTI, Role.ROLE_UTENTE_NORMALE));
+            }
+
+
+
+            for (int i = 0; i < 10; i++) {
+                appUserService.registerUser(faker.name().username(), "userpwd", Set.of(Role.ROLE_UTENTE_NORMALE));
+            }
+
+
+
+
+
+    }
+}
