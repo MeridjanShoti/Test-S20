@@ -14,6 +14,7 @@ public class EventoService {
     @Autowired
     EventoRepository eventoRepository;
 
+
     Evento saveEvento(EventoRequest request, AppUser utenteLoggato) {
         if (utenteLoggato.getRoles().contains("ROLE_ORGANIZZATORE_EVENTI")) {
             Evento evento = new Evento();
@@ -30,15 +31,17 @@ public class EventoService {
             throw new IllegalArgumentException("Solo gli organizzatori possono creare eventi");
         }
     }
+
     public void deleteEvento(Long id, AppUser utenteLoggato) {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Evento non trovato con ID: " + id));
 
-        if (!utenteLoggato.getRoles().contains("ROLE_ORGANIZZATORE_EVENTI")&& !utenteLoggato.equals(evento.getOrganizzatore())) {
+        if (!utenteLoggato.getRoles().contains("ROLE_ORGANIZZATORE_EVENTI") && !utenteLoggato.equals(evento.getOrganizzatore())) {
             throw new IllegalArgumentException("Solo gli organizzatori possono eliminare eventi");
         }
         eventoRepository.deleteById(id);
     }
+
     public Evento updateEvento(Long id, EventoRequest request, AppUser utenteLoggato) {
         Evento existingEvento = eventoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Evento non trovato con ID: " + id));
@@ -49,12 +52,46 @@ public class EventoService {
         BeanUtils.copyProperties(request, evento);
         return eventoRepository.save(evento);
     }
+
     public Evento getEventoById(Long id) {
         return eventoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Evento non trovato con ID: " + id));
     }
+
     public List<Evento> getAllEventi() {
         return eventoRepository.findAll();
     }
 
+    public Evento prenotaPartecipazione(Long id, AppUser utenteLoggato) {
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Evento non trovato con ID: " + id));
+
+        if (evento.getPartecipanti().contains(utenteLoggato)) {
+            throw new IllegalArgumentException("L'utente ha gia' prenotato questo evento");
+        } else if (evento.getPartecipanti().size() +1 >= evento.getNumeroPostiDisponibili() ) {
+            throw new IllegalArgumentException("Non ci sono piu' posti disponibili per questo evento");
+        } else {
+            evento.getPartecipanti().add(utenteLoggato);
+            return eventoRepository.save(evento);
+        }
+    }
+    public Evento annullaPartecipazione(Long id, AppUser utenteLoggato) {
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Evento non trovato con ID: " + id));
+
+        if (!evento.getPartecipanti().contains(utenteLoggato)) {
+            throw new IllegalArgumentException("L'utente non ha prenotato questo evento");
+        } else {
+            evento.getPartecipanti().remove(utenteLoggato);
+            return eventoRepository.save(evento);
+        }
+    }
+    public List<Evento> getEventiByUtenteLoggato(AppUser utenteLoggato) {
+        List<Evento> eventi = eventoRepository.findByPartecipanti(utenteLoggato);
+        if (eventi.isEmpty()) {
+            throw new IllegalArgumentException("L'utente non ha prenotato nessun evento");
+        } else {
+            return eventi;
+        }
+    }
 }

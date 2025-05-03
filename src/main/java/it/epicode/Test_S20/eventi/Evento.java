@@ -32,7 +32,7 @@ public class Evento {
     private AppUser organizzatore;
     @ManyToMany
     @JoinTable(
-            name = "partecipazioni",
+            name = "partecipanti",
             joinColumns = @JoinColumn(name = "evento_id"),
             inverseJoinColumns = @JoinColumn(name = "utente_id")
     )
